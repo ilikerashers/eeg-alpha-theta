@@ -1,5 +1,6 @@
 # import matplotlib.pyplot as plt
 
+import asyncio
 import mne
 from mne.datasets import sample
 # import numpy as np
@@ -48,13 +49,15 @@ alpha_delta_ratio=0
 def main():
     pass
 
-def get_ratio():
-    return alpha_delta_ratio
+
 
 # if __name__ == "__main__":
 #    # stuff only to run when not called via 'import' here
 
 async def get_stats():
+    
+    global alpha_delta_ratio
+    
     while True:
         for ii, ev in enumerate(rt_epochs.iter_evoked()):
             print("Just got epoch %d" % (ii + 1))
@@ -71,8 +74,16 @@ async def get_stats():
             delta_psds_mean = delta_psds.mean(0).mean(0)
             alpha_psds_mean = alpha_psds.mean(0).mean(0)
             print(alpha_psds_mean/delta_psds_mean)
+            
             print("alpha/theta ratio:" + str(alpha_psds_mean/delta_psds_mean))
+            
             alpha_delta_ratio = (alpha_psds_mean/delta_psds_mean)
-            yield alpha_delta_ratio
-            time.sleep(1)
+            
+            
+            # yield alpha_delta_ratio
+            # time.sleep(1)
+            await asyncio.sleep(1)
         pass
+    
+def get_ratio():
+    return alpha_delta_ratio
